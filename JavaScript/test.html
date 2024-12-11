@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+
+  <style>
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body > div {
+  margin-top: 2em;
+  margin-left: 2em;
+
+}
+
+ul, ol {
+  margin-left: 1em;
+}
+
+/*Spacing between items in each div*/
+div > * {
+  margin-top: 0.5em;
+}
+
+p {
+  color: red;
+}
+
+  </style>
+</head>
+<body>
+  
+
+  <div>
+    <p>Change heading with button click</p>
+    <h2 id="MyTitle">Change me</h2>
+    <button id="MyButton">This is a button</button>
+  </div>
+
+  <!--Get text and use that to change h1 -->
+  <div>
+    <p>Change heading based on input text</p>
+    <h2 id="changeTxtByInput">Change me</h2>
+    <input type="text" id="enteredText">
+    <input type="submit" id="mySubmit">      
+  </div>
+
+  <div>
+    <p>Create list with button click</p>
+    <button id="btnCreateList">Create list</button>
+    <div id="listContainer">
+    </div>
+    <!-- Add items to array using JS 
+    <ul>
+      <li>Item 1</li>
+      <li>Item 2</li>
+    </ul>
+  -->
+  </div>
+
+  <div id="moviesListContainer">
+    <p>Movies List</p>
+    <button id="btnGetMovies">Get Movies</button>
+      <ul id="moviesList">
+      <!--Movies list will go here-->
+      </ul>
+  </div>
+
+  <div id="BooksListContainer">
+    <p>Books list</p>
+    <button id="btnGetBooks">Get Books</button>
+      <ul id="booksList">
+        <!--Books list will be genreated by JavaScript-->
+      </ul>
+  </div>
+
+  <script>
+
+    ////////////////////////////////////////////////////////////////////////
+    const button1 = document.getElementById("MyButton");
+    const h1 = document.getElementById("MyTitle");
+    let stateChanged = false;
+
+    button1.addEventListener('click', () => {
+      if (!stateChanged) {
+        h1.innerHTML = "Button clicked";
+        stateChanged = true;
+      } else {
+        h1.innerHTML = "Change me";
+        stateChanged = false;
+      }
+    });
+
+    ////////////////////////////////////////////////////////////////////////////////
+    //Change H1 based on input text
+    const submitButton = document.getElementById('mySubmit');
+    const txtInput = document.getElementById('enteredText');
+    const hdngInputText = document.getElementById('changeTxtByInput');
+
+    submitButton.addEventListener('click', () => {
+      hdngInputText.innerHTML = txtInput.value;
+      //console.log("inputtext ", txtInput.value);
+    })
+
+    //////////////////////////////////////////////////////////////////////////////////
+    //create list on button click
+
+    let myMovies = ['Shawshank', 'Apollo 13', 'Groundhog Day'];
+
+    const listContainer = document.getElementById('listContainer');
+    
+    //event listener for create list button
+    btnCreateList.addEventListener('click', () => {
+
+      let moviesHTML = '<ul>';
+
+      myMovies.forEach(movie => {
+        //console.log(movie);
+        moviesHTML += `<li>${movie}</li>`;
+      });
+
+      moviesHTML += '</ul>';
+      listContainer.innerHTML = moviesHTML;
+
+  });
+
+  ///////////////////////////////////////////////////////////////////////////////
+  const APILINK = 'https://api.themoviedb.org/3/discover/movie?sort_by=popularity.desc&api_key=e4a15a932c8028b2086d5b249a80751c&page=1';
+
+   //Movies list to add to 
+   let moviesList = document.getElementById('moviesList');
+
+  //Get movie and display title in a list
+  btnGetMovies.addEventListener('click', () => {
+    fetch(APILINK).then(res => res.json())
+      .then((data) => {
+        console.log(data.results);
+        data.results.forEach(element => {
+          //const listItem = document.createElement('li');
+          //listItem.innerText = element.title;
+          //moviesList.appendChild(listItem);
+
+          moviesList.innerHTML += `<li>${element.title}</li>`;
+        });
+      });
+
+  });
+
+
+  ///////////////////////////////////////////////////////////////////////////////
+  const BOOKSAPILINK = "https://www.googleapis.com/books/v1/volumes?q=Broca+inauthor:sagan+intitle:cosmos";
+
+  //Get books and display in a list
+  btnGetBooks.addEventListener('click', () => {
+    fetch(BOOKSAPILINK).then(response => response.json())
+      .then((data) => {
+        //console.log(data.items);
+        data.items.forEach(element => {
+          console.log(element.volumeInfo.title);
+        });
+      });
+  });
+
+
+
+
+  </script>
+
+</body>
+</html>
