@@ -74,6 +74,10 @@ p {
 
   <div id="BooksListContainer">
     <p>Books list</p>
+    Keyword: <input type="text" id="inputBook"><br>
+    Author:  <input type="text" id="inputAuthor"><br>
+    Title:   <input type="text" id="inputTitle"><br>
+    
     <button id="btnGetBooks">Get Books</button>
       <ul id="booksList">
         <!--Books list will be genreated by JavaScript-->
@@ -136,6 +140,7 @@ p {
    //Movies list to add to 
    let moviesList = document.getElementById('moviesList');
 
+
   //Get movie and display title in a list
   btnGetMovies.addEventListener('click', () => {
     fetch(APILINK).then(res => res.json())
@@ -154,15 +159,38 @@ p {
 
 
   ///////////////////////////////////////////////////////////////////////////////
+  
+  const BOOKSURL = "https://www.googleapis.com/books/v1/volumes?";
   const BOOKSAPILINK = "https://www.googleapis.com/books/v1/volumes?q=Broca+inauthor:sagan+intitle:cosmos";
+
+  const bookQuery = document.getElementById('inputBookQuery');
+  let booksList = document.getElementById('booksList');
+
 
   //Get books and display in a list
   btnGetBooks.addEventListener('click', () => {
-    fetch(BOOKSAPILINK).then(response => response.json())
-      .then((data) => {
-        //console.log(data.items);
+    const book = inputBook.value;
+    const author = inputAuthor.value;
+    const title = inputTitle.value;
+
+    const booksAPIURL = BOOKSURL + `q=${book}+inauthor:${author}+intitle:${title}`;
+    //console.log(data.items);
+    console.log(booksAPIURL);
+
+    let imageURL;
+
+    fetch(booksAPIURL).then(response => response.json())
+      .then((data) => {        
         data.items.forEach(element => {
           console.log(element.volumeInfo.title);
+          booksList.innerHTML += `<li>${element.volumeInfo.title}</li>`;
+          try {
+           imageURL = element.volumeInfo.imageLinks.thumbnail;
+          } catch (err) {
+            imageURL = "";
+          }
+          booksList.innerHTML += `<li><img src="${imageURL}"</li>`;
+
         });
       });
   });
